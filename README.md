@@ -1,2 +1,2 @@
 # PyGame
-simple side scrolling game.
+simple side scrolling game. for practice 
