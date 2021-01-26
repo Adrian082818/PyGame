@@ -1,18 +1,19 @@
 # import pygame module
 import pygame
+from pygame.locals import *
 
-# import pygame.locals for easier access to key coordinates
-from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_ESCAPE,
-    KEYDOWN,
-    QUIT,
-)
-# Initialize pygame 
 pygame.init()
+# import pygame.locals for easier access to key coordinates
+# from pygame.locals import (
+#     K_UP,
+#     K_DOWN,
+#     K_LEFT,
+#     K_RIGHT,
+#     K_ESCAPE,
+#     KEYDOWN,
+#     QUIT,
+# )
+# Initialize pygame 
 
 screen_width = 1000
 screen_height = 1000 
@@ -20,9 +21,44 @@ screen_height = 1000
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Platformer')
 
+# define game variables
+tile_size = 200
+
 # load images 
 sun_img = pygame.image.load('img/sun.png')
 background_img = pygame.image.load('img/sky.png')
+
+class World():
+    def __init__(self, data):
+        self.tile_list = []
+
+        # load images
+        dirt_img = pygame.image.load('img/dirt.png')
+
+        row_count = 0
+        for row in data:
+            col_count = 0
+            for tile in row:
+                if tile == 1:
+                    img = pygame.transform.scale(dirt_img, (tile_size, tile_size))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * tile_size
+                    img_rect.y = row_count * tile_size
+                    tile = (img, img_rect)
+                    self.tile_list.append(tile)
+                col_count += 1
+            row_count += 1
+
+
+world_data = [
+[1, 1, 1, 1, 1],
+[1, 0, 0, 0, 1],
+[1, 0, 0, 0, 1],
+[1, 0, 0, 0, 1],
+[1, 1, 1, 1, 1]
+]
+
+world = World(world_data)
 
 run = True 
 while run:
