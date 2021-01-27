@@ -2,18 +2,9 @@
 import pygame
 from pygame.locals import *
 
-pygame.init()
-# import pygame.locals for easier access to key coordinates
-# from pygame.locals import (
-#     K_UP,
-#     K_DOWN,
-#     K_LEFT,
-#     K_RIGHT,
-#     K_ESCAPE,
-#     KEYDOWN,
-#     QUIT,
-# )
 # Initialize pygame 
+pygame.init()
+
 
 screen_width = 1000
 screen_height = 1000 
@@ -28,6 +19,14 @@ tile_size = 50
 sun_img = pygame.image.load('img/sun.png')
 background_img = pygame.image.load('img/sky.png')
 
+class Player():
+    def __init__(self, x, y):
+        img = pygame.image.load('img/guy1.png')
+        self.image = pygame.transform.scale(img, (40, 80))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
 class World():
     def __init__(self, data):
         self.tile_list = []
@@ -41,23 +40,21 @@ class World():
             col_count = 0
             for tile in row:
                 if tile == 1:
-                    img = pygame.transform.scale(grass_img, (tile_size, tile_size))
-                    img_rect = img.get_rect()
-                    img_rect.x = col_count * tile_size
-                    img_rect.y = row_count * tile_size
-                    tile = (img, img_rect)
-                    self.tile_list.append(tile)
-                col_count += 1
-            row_count += 1
-            if tile == 2:
                     img = pygame.transform.scale(dirt_img, (tile_size, tile_size))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * tile_size
                     img_rect.y = row_count * tile_size
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
-            col_count += 1
-        row_count += 1
+                if tile == 2:
+                        img = pygame.transform.scale(grass_img, (tile_size, tile_size))
+                        img_rect = img.get_rect()
+                        img_rect.x = col_count * tile_size
+                        img_rect.y = row_count * tile_size
+                        tile = (img, img_rect)
+                        self.tile_list.append(tile)
+                col_count += 1
+            row_count += 1
 
     def draw(self):
         for tile in self.tile_list:
@@ -87,8 +84,9 @@ world_data = [
 [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-
+player = Player(100, screen_height - 130)
 world = World(world_data)
+
 
 run = True 
 while run:
