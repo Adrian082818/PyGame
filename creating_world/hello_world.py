@@ -5,6 +5,9 @@ from pygame.locals import *
 # Initialize pygame 
 pygame.init()
 
+clock = pygame.time.Clock()
+fps = 60
+
 
 screen_width = 900
 screen_height = 900 
@@ -130,6 +133,8 @@ world = World(world_data)
 run = True 
 while run:
 
+    clock.tick(fps)
+    
     screen.blit(background_img, (0, 0))
     screen.blit(sun_img, (100, 100))
 
