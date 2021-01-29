@@ -41,7 +41,7 @@ class Player():
     def update(self):
         dx = 0 
         dy = 0
-        walk_cooldown = 20
+        walk_cooldown = 10
 
         # get key presses
         key = pygame.key.get_pressed()
@@ -54,8 +54,13 @@ class Player():
             dx -= 5
             self.counter += 1 
         if key[pygame.K_RIGHT]:
-            self.counter += 1 
             dx += 5
+            self.counter += 1
+        if key[pygame.K_LEFT] == False and key[pygame.K_RIGHT] == False:
+            self.counter = 0
+            self.index = 0
+            self.image = self.images_right[self.index]
+
 
 
         # handle animation
