@@ -32,7 +32,6 @@ class Player():
             img_right = pygame.transform.scale(img_right, (40, 80))
             self.images_right.append(img_right)
         self.image = self.images_right[self.index]
-        # self.image = pygame.transform.scale(img, (40, 80))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -42,6 +41,7 @@ class Player():
     def update(self):
         dx = 0 
         dy = 0
+        walk_cooldown = 20
 
         # get key presses
         key = pygame.key.get_pressed()
@@ -52,15 +52,19 @@ class Player():
             self.jumped = False 
         if key[pygame.K_LEFT]:
             dx -= 5
+            self.counter += 1 
         if key[pygame.K_RIGHT]:
+            self.counter += 1 
             dx += 5
 
 
         # handle animation
-        self.index += 1
-        if self.index >= len(self.images_right):
-            self.index = 0
-        self.image = self.images_right[self.index]
+        if self.counter > walk_cooldown:
+            self.counter = 0
+            self.index += 1
+            if self.index >= len(self.images_right):
+                self.index = 0
+            self.image = self.images_right[self.index]
 
         # add gravity
         self.vel_y += 1 
@@ -136,7 +140,7 @@ world_data = [
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2, 2, 2, 2, 2, 1], 
 [1, 0, 0, 0, 0, 0, 2, 2, 2, 6, 6, 6, 6, 6, 1, 1, 1, 1, 1, 1], 
 [1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-[1, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+[1, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
