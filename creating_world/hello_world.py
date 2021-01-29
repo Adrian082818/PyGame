@@ -38,6 +38,8 @@ class Player():
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
         self.vel_y = 0
         self.jumped = False
         self.direction = 0
@@ -90,6 +92,15 @@ class Player():
         dy += self.vel_y
 
         # check for collision
+        for tile in world.tile_list:
+            # check for collision on y direction
+            if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                # check if below the ground i.e jumping
+                if self.vel_y < 0:
+                    dy = tile[1].bottom - self.rect.top
+                # check if above the ground i.e falling
+                if self.vel_y >= 0:
+                    dy = tile[1].top - self.rect.bottom
 
         # update player coordinates
         self.rect.x += dx
