@@ -9,8 +9,8 @@ clock = pygame.time.Clock()
 fps = 60
 
 
-screen_width = 900
-screen_height = 900 
+screen_width = 1000
+screen_height = 850
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Platformer')
@@ -31,6 +31,7 @@ class Player():
             img_right = pygame.image.load(f'img/guy{num}.png')
             img_right = pygame.transform.scale(img_right, (40, 80))
             self.images_right.append(img_right)
+        self.image = self.images_right[self.index]
         # self.image = pygame.transform.scale(img, (40, 80))
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -53,6 +54,13 @@ class Player():
             dx -= 5
         if key[pygame.K_RIGHT]:
             dx += 5
+
+
+        # handle animation
+        self.index += 1
+        if self.index >= len(self.images_right):
+            self.index = 0
+        self.image = self.images_right[self.index]
 
         # add gravity
         self.vel_y += 1 
