@@ -10,7 +10,7 @@ fps = 60
 
 
 screen_width = 1000
-screen_height = 900
+screen_height = 1000
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Platformer')
@@ -22,6 +22,21 @@ game_over = 0
 # load images 
 sun_img = pygame.image.load('img/sun.png')
 background_img = pygame.image.load('img/sky.png')
+restart_img = pygame.image.load('img/restart_btn.png')
+
+
+class Button():
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def draw(self):
+
+        # draw button
+        screen.blit(self.image, self.rect)
+
 
 class Player():
     def __init__(self, x, y):
@@ -124,9 +139,7 @@ class Player():
             self.rect.x += dx
             self.rect.y += dy 
 
-            # if self.rect.bottom > screen_height:
-            #     self.rect.bottom = screen_height
-            #     dy = 0
+
         elif game_over == -1:
             self.image = self.dead_image
             if self.rect.y > 200:
@@ -160,12 +173,12 @@ class World():
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
                 if tile == 2:
-                        img = pygame.transform.scale(grass_img, (tile_size, tile_size))
-                        img_rect = img.get_rect()
-                        img_rect.x = col_count * tile_size
-                        img_rect.y = row_count * tile_size
-                        tile = (img, img_rect)
-                        self.tile_list.append(tile)
+                    img = pygame.transform.scale(grass_img, (tile_size, tile_size))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * tile_size
+                    img_rect.y = row_count * tile_size
+                    tile = (img, img_rect)
+                    self.tile_list.append(tile)
                 if tile == 3:
                     blob = Enemy(col_count * tile_size, row_count * tile_size + 15)
                     blob_group.add(blob)
@@ -177,8 +190,8 @@ class World():
 
     def draw(self):
         for tile in self.tile_list:
-            screen.blit(tile[0], tile[1])
-            pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
+                screen.blit(tile[0], tile[1])
+                pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
 
 
@@ -235,10 +248,14 @@ world_data = [
 ]
 
 player = Player(100, screen_height - 130)
+
 blob_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
+
 world = World(world_data)
 
+# create button
+restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 
 run = True 
 while run:
@@ -262,6 +279,10 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False 
+        # added to exit fullscreen mode using ESC button
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                run = False 
 
     pygame.display.update()
 
