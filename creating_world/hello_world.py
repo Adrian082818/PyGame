@@ -88,7 +88,7 @@ class Player():
         if game_over == 0:
             # get key presses
             key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped == False:
+            if key[pygame.K_SPACE] and self.jumped == False and self.in_air == False:
                 self.vel_y = -15
                 self.jumped = True 
             if key[pygame.K_SPACE] == False:
@@ -129,6 +129,7 @@ class Player():
             dy += self.vel_y
 
             # check for collision
+            self.in_air = True
             for tile in world.tile_list:
                 # check for collision in x direction
                 if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
@@ -143,6 +144,7 @@ class Player():
                     elif self.vel_y >= 0:
                         dy = tile[1].top - self.rect.bottom
                         self.vel_y = 0
+                        self.in_air = False
 
             # check for collision with enemies 
             if pygame.sprite.spritecollide(self, blob_group, False):
@@ -190,6 +192,7 @@ class Player():
         self.vel_y = 0
         self.jumped = False
         self.direction = 0
+        self.in_air = True
 
 
 class World():
