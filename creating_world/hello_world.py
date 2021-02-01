@@ -21,7 +21,8 @@ pygame.display.set_caption('Platformer')
 tile_size = 48
 game_over = 0
 main_menu = True
-level = 1 
+level = 0
+max_levels = 7
 
 # load images 
 sun_img = pygame.image.load('img/sun.png')
@@ -30,6 +31,20 @@ restart_img = pygame.image.load('img/restart_btn.png')
 start_img = pygame.image.load('img/start_btn.png')
 exit_img = pygame.image.load('img/exit_btn.png')
 
+
+# function to reset level
+def reset_level(level):
+    player.reset(100, screen_height - 130) 
+    blob_group.empty()
+    lava_group.empty()
+    exit_group.empty()
+
+    if path.exists(f'level{level}_data'):
+        pickle_in = open(f'level{level}_data', 'rb')
+        world_data = pickle.load(pickle_in)
+    world = World(world_data)
+
+    return world 
 
 class Button():
     def __init__(self, x, y, image):
@@ -64,26 +79,7 @@ class Button():
 class Player():
     def __init__(self, x, y):
         self.reset(x, y)
-        # self.images_right = []
-        # self.images_left = []
-        # self.index = 0
-        # self.counter = 0
-        # for num in range(1, 5):
-        #     img_right = pygame.image.load(f'img/guy{num}.png')
-        #     img_right = pygame.transform.scale(img_right, (40, 80))
-        #     img_left = pygame.transform.flip(img_right, True, False)
-        #     self.images_right.append(img_right)
-        #     self.images_left.append(img_left)
-        #     self.dead_image = pygame.image.load('img/ghost.png')
-        # self.image = self.images_right[self.index]
-        # self.rect = self.image.get_rect()
-        # self.rect.x = x
-        # self.rect.y = y
-        # self.width = self.image.get_width()
-        # self.height = self.image.get_height()
-        # self.vel_y = 0
-        # self.jumped = False
-        # self.direction = 0
+
 
     def update(self, game_over):
         dx = 0 
@@ -160,6 +156,9 @@ class Player():
             if pygame.sprite.spritecollide(self, lava_group, False):
                 game_over = -1
 
+            # check collision with exit
+            if pygame.sprite.spritecollide(self, exit_group, False):
+                game_over = 1 
 
             # update player coordinates
             self.rect.x += dx
@@ -234,7 +233,7 @@ class World():
                     lava = Lava(col_count * tile_size, row_count * tile_size + (tile_size // 2))
                     lava_group.add(lava)
                 if tile == 8:
-                    exit = Exit(col_count * tile_size, row_count * tile_size)
+                    exit = Exit(col_count * tile_size, row_count * tile_size - (tile_size // 2))
                     exit_group.add(exit)
                 col_count += 1
             row_count += 1
@@ -277,7 +276,7 @@ class Exit(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         img = pygame.image.load('img/exit.png')
         self.image = pygame.transform.scale(img, (tile_size, int(tile_size * 1.5)))
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect() 
         self.rect.x = x
         self.rect.y = y
 
@@ -320,8 +319,8 @@ while run:
             blob_group.update()
 
         blob_group.draw(screen)
-        # lava_group.update()
         lava_group.draw(screen)
+        exit_group.draw(screen)
 
         game_over = player.update(game_over)
 
@@ -330,6 +329,19 @@ while run:
             if restart_button.draw():
                 player.reset(100, screen_height - 130)
                 game_over = 0
+
+        # if player has completed the level
+        if game_over == 1:
+            # reset game and go to next level
+            level += 1
+            if level <= max_levels:
+                # reset level
+                world_data = []
+                world = reset_level(level)
+                game_over = 0
+            else:
+                # restart game
+                pass 
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
