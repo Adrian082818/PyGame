@@ -2,6 +2,7 @@
 import pygame
 from pygame.locals import *
 import pickle 
+from os import path 
 
 # Initialize pygame 
 pygame.init()
@@ -20,6 +21,7 @@ pygame.display.set_caption('Platformer')
 tile_size = 48
 game_over = 0
 main_menu = True
+level = 1 
 
 # load images 
 sun_img = pygame.image.load('img/sun.png')
@@ -299,8 +301,9 @@ blob_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
 
 # load in level data and create world
-pickle_in = open('level1_data', 'rb')
-world_data = pickle.load(pickle_in)
+if path.exists(f'level{level}_data'):
+    pickle_in = open(f'level{level}_data', 'rb')
+    world_data = pickle.load(pickle_in)
 world = World(world_data)
 
 # create button
