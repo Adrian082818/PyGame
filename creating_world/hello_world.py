@@ -327,7 +327,7 @@ while run:
         # if player has died 
         if game_over == -1:
             if restart_button.draw():
-                player.reset(100, screen_height - 130)
+                world = reset_level(level)
                 game_over = 0
 
         # if player has completed the level
@@ -341,7 +341,11 @@ while run:
                 game_over = 0
             else:
                 # restart game
-                pass 
+                if restart_button.draw():
+                    level = 1
+                    # reset the level
+                    world_data = reset_level(level)
+                    game_over = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
