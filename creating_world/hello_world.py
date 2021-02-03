@@ -17,12 +17,20 @@ screen_height = 1000
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Platformer')
 
+
+# define font 
+font_score = pygame.font.SysFont('Bauhaus 93', 30)
+
 # define game variables
 tile_size = 48
 game_over = 0
 main_menu = True
 level = 0
 max_levels = 7
+score = 0
+
+# define colors
+white = (255, 255, 255)
 
 # load images 
 sun_img = pygame.image.load('img/sun.png')
@@ -30,6 +38,11 @@ background_img = pygame.image.load('img/sky.png')
 restart_img = pygame.image.load('img/restart_btn.png')
 start_img = pygame.image.load('img/start_btn.png')
 exit_img = pygame.image.load('img/exit_btn.png')
+
+
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
 
 
 # function to reset level
@@ -300,6 +313,10 @@ lava_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 
+# create dummy coin for showing score
+score_coin = Coin(tile_size // 2, tile_size // 2)
+coin_group.add(score_coin)
+
 # load in level data and create world
 if path.exists(f'level{level}_data'):
     pickle_in = open(f'level{level}_data', 'rb')
@@ -329,6 +346,11 @@ while run:
 
         if game_over == 0:
             blob_group.update()
+            # update score
+            # check if a coin has been collected
+            if pygame.sprite.spritecollide(player, coin_group, True):
+                score += 1
+            draw_text('X ' + str(score), font_score, white, tile_size - 10, 10)
 
         blob_group.draw(screen)
         lava_group.draw(screen)
@@ -342,6 +364,7 @@ while run:
             if restart_button.draw():
                 world = reset_level(level)
                 game_over = 0
+                score = 0
 
         # if player has completed the level
         if game_over == 1:
@@ -359,6 +382,7 @@ while run:
                     # reset the level
                     world_data = reset_level(level)
                     game_over = 0
+                    score = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
