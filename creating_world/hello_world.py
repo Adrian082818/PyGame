@@ -1,10 +1,13 @@
 # import pygame module
 import pygame
 from pygame.locals import *
+from pygame import mixer
 import pickle 
 from os import path 
 
 # Initialize pygame 
+pygame.mixer.pre_init(44100, -16, 2, 512)
+mixer.init()
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -41,6 +44,14 @@ restart_img = pygame.image.load('img/restart_btn.png')
 start_img = pygame.image.load('img/start_btn.png')
 exit_img = pygame.image.load('img/exit_btn.png')
 
+
+# load sounds
+coin_fx = pygame.mixer.Sound('img/coin.wav')
+coin_fx.set_volume(0.5)
+jump_fx = pygame.mixer.Sound('img/jump.wav')
+jump_fx.set_volume(0.5)
+game_over_fx = pygame.mixer.Sound('img/game_over.wav')
+game_over_fx.set_volume(0.5)
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
