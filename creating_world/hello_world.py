@@ -64,6 +64,7 @@ def draw_text(text, font, text_col, x, y):
 def reset_level(level):
     player.reset(100, screen_height - 130) 
     blob_group.empty()
+    platform_group.empty()
     lava_group.empty()
     exit_group.empty()
 
