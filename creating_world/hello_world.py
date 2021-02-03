@@ -114,6 +114,7 @@ class Player():
         dx = 0 
         dy = 0
         walk_cooldown = 10
+        col_thresh = 20
 
 
         if game_over == 0:
@@ -192,6 +193,27 @@ class Player():
             if pygame.sprite.spritecollide(self, exit_group, False):
                 game_over = 1 
 
+
+            # check for collision with platforms
+            for platform in platform_group:
+                # collision in the x direction
+                if platform.rect.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                    dx = 0
+                # collision in the y direction
+                if platform.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                    # check if below platform
+                    if abs((self.rect.top + dy) - platform.rect.bottom) < col_thresh:
+                        self.vel_y = 0
+                        dy = platform.rect.bottom - self.rect.top
+                    # check if above platform
+                    elif abs((self.rect.bottom + dy) - platform.rect.top) < col_thresh:
+                        self.rect.bottom = platform.rect.top - 1
+                        self.in_air = False 
+                        dy = 0
+                    # move sideways with the platform
+                    if platform.move_x != 0:
+                        self.rect.x += platform.move_direction
+
             # update player coordinates
             self.rect.x += dx
             self.rect.y += dy 
@@ -205,7 +227,6 @@ class Player():
 
         # draw player onto screen
         screen.blit(self.image, self.rect)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
         return game_over
 
@@ -283,7 +304,6 @@ class World():
     def draw(self):
         for tile in self.tile_list:
                 screen.blit(tile[0], tile[1])
-                pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
 
 
